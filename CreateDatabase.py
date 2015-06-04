@@ -7,7 +7,7 @@ class CreateDB:
     def __init__(self, db_user, db_password, db_address, db_port):
 
         # Create database connection
-        self.connection_string = 'mysql+mysqlconnector://'+ db_user + ':' + db_password + '@'+ db_address + ':' + db_port + '/'
+        self.connection_string = 'mysqldb://'+ db_user + ':' + db_password + '@'+ db_address + ':' + db_port + '/'
 
     def Connect(self):
         engine = create_engine(self.connection_string)
