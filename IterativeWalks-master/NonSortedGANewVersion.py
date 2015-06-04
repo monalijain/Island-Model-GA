@@ -1,18 +1,17 @@
 from PerformanceMeasures_ShortVersion import CalculatePerformanceMeasures
-from PerformanceMeasures_ShortVersion_Reporting import CalculatePerformanceMeasuresReporting
 from MakeNewPopulationVersion2 import MakeNewPopulation
 import csv
 from datetime import datetime
 from FastNonDominatedSort import FastNonDominatedSort
 import GlobalVariables as gv
 import logging
-
+from DBUtils_Databases import *
 C={}
 
 #For checking the convergence of the Pareto Optimal Front
 ParetoOptimalFront={}
 
-def NonSortedGA(walkforward_number,MaxIndividualsInGen,MaxGen,MaxIndividuals,dbObject):
+def NonSortedGA(walkforward_number,MaxIndividualsInGen,MaxGen,MaxIndividuals,dbObject,islandID):
 
     StoreParetoID={}
     stringParetoFront= "ParetoFront Walkforward"+str(walkforward_number)+"_"+"stock"+"_"+str(gv.stock_number)+".csv"
@@ -23,15 +22,21 @@ def NonSortedGA(walkforward_number,MaxIndividualsInGen,MaxGen,MaxIndividuals,dbO
 
     Pt={}
     logging.info("Current Time %s", str(datetime.now()))
+
+    gen=1
     for num in range(1,MaxIndividualsInGen+1):
         PerfM=CalculatePerformanceMeasures(num,walkforward_number,gv.stock_number,dbObject)
-        #print "Performance Matrix: ",PerfM
         Pt[num]=[PerfM[0][0],PerfM[0][1],PerfM[0][2],PerfM[0][3],PerfM[0][4],PerfM[0][5],PerfM[0][6]]
-        #print num
 
     logging.info("We have Initial seed individuals")
 
     for gen in range(1,min(MaxGen,MaxIndividuals/MaxIndividualsInGen)):
+        for indiv in Pt.keys():
+            dbObject.dbQuery("INSERT INTO island_generation_table " \
+                                     "(island_id, generation, individual_id) " \
+                                     "VALUES " \
+                                     "(" + str(islandID) + ", " + str(gen) + ", " + str(indiv) + ")")
+
         StoreParetoID_EachGen=[]
         logging.info("This is generation %s",gen-1)
         logging.info("Current Time %s",str(datetime.now()))
@@ -42,11 +47,11 @@ def NonSortedGA(walkforward_number,MaxIndividualsInGen,MaxGen,MaxIndividuals,dbO
         logging.info("Writing Front in pareto front file")
 
         for key in F[1].keys():
-            F_Reporting=CalculatePerformanceMeasuresReporting(key,walkforward_number,gv.stock_number,dbObject)
-            ParetoFront.writerow([key,F[1][key][0],F[1][key][1],F[1][key][2],F[1][key][3],F[1][key][4],F[1][key][5],F[1][key][6],
-                                  " ",F_Reporting[0][0],F_Reporting[0][1],F_Reporting[0][2],F_Reporting[0][3],F_Reporting[0][4],
-                                  F_Reporting[0][5],F_Reporting[0][6]])
             StoreParetoID_EachGen.append(key)
+            dbObject.dbQuery("INSERT INTO island_pareto_front_table " \
+                                 "(island_id, generation, individual_id) " \
+                                 "VALUES " \
+                                 "(" + str(islandID) + ", " + str(gen) + ", " + str(key) + ")")
 
         StoreParetoID[gen-1]=StoreParetoID_EachGen
 
@@ -77,6 +82,13 @@ def NonSortedGA(walkforward_number,MaxIndividualsInGen,MaxGen,MaxIndividuals,dbO
             logging.info("Converged")
         Pt=Pt1
 
+
+    for indiv in Pt.keys():
+            dbObject.dbQuery("INSERT INTO island_generation_table " \
+                                     "(island_id, generation, individual_id) " \
+                                     "VALUES " \
+                                     "(" + str(islandID) + ", " + str(gen) + ", " + str(indiv) + ")")
+
     StoreParetoID_EachGen=[]
     F=FastNonDominatedSort(Pt)
 
@@ -88,6 +100,11 @@ def NonSortedGA(walkforward_number,MaxIndividualsInGen,MaxGen,MaxIndividuals,dbO
         NetPL_CurrentGen=float(F[1][individual][4])+NetPL_CurrentGen
         TotalTrades_CurrentGen=float(F[1][individual][5])+TotalTrades_CurrentGen
         StoreParetoID_EachGen.append(individual)
+        dbObject.dbQuery("INSERT INTO island_pareto_front_table " \
+                                 "(island_id, generation, individual_id) " \
+                                 "VALUES " \
+                                 "(" + str(islandID) + ", " + str(gen) + ", " + str(individual) + ")")
+
 
     StoreParetoID[gen]=StoreParetoID_EachGen
 

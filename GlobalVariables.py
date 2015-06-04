@@ -17,7 +17,7 @@ priceSeriesTable="price_series_table" #Name of the price series table in the dat
 name_Tradesheet_Table="tradesheet_data_table" #name of the tradesheet table
 
 
-MaxIndividualsInGen=100 #Maximum Individuals that you want in each generation
+MaxIndividualsInGen=1000 #Maximum Individuals that you want in each generation
 
 #Dont change these for now
 MinimumGen=2 #Minimum Generations for which the program should run, provided those many individuals exist
