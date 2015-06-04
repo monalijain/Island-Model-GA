@@ -30,6 +30,7 @@ def Make_Performance_Measures(Begin,End,Train_Or_Report,walkforward_number,islan
     #print BeginDate.date()
     #print EndDate.date()
 
+
     query= "SELECT *, 1 FROM " + ip.name_Tradesheet_Table + " WHERE entry_date >= '"+str(BeginDate.date()) + "' AND entry_date <= '"+str(EndDate.date())+"'"
     logging.info("Executing Query %s",query)
     resultIndividuals = dbObject1.dbQuery(query)
