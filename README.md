@@ -5,4 +5,6 @@ Island Model
 2. Edit the Island Parameters File, for Number of Islands, and Length Of an Epoch (DEFAULT Number Of islands - 5, and 
 length of an epoch- 10 generations).
 3. Create Databases.py and DatabaseManager File contain "mysqldb" in the connection string.
+4. Run the island process file
+
 
