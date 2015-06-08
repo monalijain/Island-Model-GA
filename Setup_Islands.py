@@ -28,7 +28,7 @@ def Setup_Islands(walkforward_number):
         print "ISLAND ",i
         CreatedbObject=CreateDB(gv.db_username,gv.db_password,gv.db_host,gv.db_port)
         CreatedbObject.Connect()
-        CreatedbObject.Execute("DROP DATABASE IF EXISTS island"+str(i))
+        #CreatedbObject.Execute("DROP DATABASE IF EXISTS island"+str(i))
         #CreatedbObject.Execute("DROP DATABASE IF EXISTS island"+str(i))
         CreatedbObject.Execute("CREATE DATABASE island"+str(i))
         dbObject =Diff_DBUtils()
