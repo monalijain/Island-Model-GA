@@ -68,7 +68,9 @@ if __name__ == '__main__':
 
     activeProcess = []
     processList = []
-
+    WalkNo=1
+    subPopSize=Setup_Islands(WalkNo)
+    
     #Create WALKFWD LIST:
     [TBeginList,TendList,RBeginList,REndList]=CreateWFList(gv.priceSeriesTable, gv.numDaysInTraining, gv.numDaysInReporting) #Creates Walkforward List
     print(TBeginList,TendList)
@@ -86,8 +88,7 @@ if __name__ == '__main__':
         processNum += 1
 
 
-    WalkNo=1
-    subPopSize=Setup_Islands(WalkNo)
+    
     Epochs=1
     initial_generation=1
     initial_individual_id=(initial_generation-1)*gv.MaxIndividualsInGen+1
